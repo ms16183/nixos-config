@@ -18,7 +18,7 @@
   ];
 
   services.xremap = {
-    userName = "miu";
+    userName = "${username}";
     serviceMode = "system";
     config = {
       modmap = [
