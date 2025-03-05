@@ -15,6 +15,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    xremap = {
+      url = "github:xremap/nix-flake";
+    };
+
     catppuccin = {
       url = "github:catppuccin/nix";
     };
@@ -25,6 +29,7 @@
     nixpkgs,
     nixos-hardware,
     home-manager,
+    xremap,
     catppuccin,
     ... 
   } @ inputs:
@@ -37,7 +42,7 @@
       ${host} = nixpkgs.lib.nixosSystem {
 
         system = "x86_64-linux";
-        specialArgs = { inherit inputs nixos-hardware username host catppuccin; };
+        specialArgs = { inherit inputs nixos-hardware xremap username host catppuccin; };
 
         modules = [
           ./hosts/${host}

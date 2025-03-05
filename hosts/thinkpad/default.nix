@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, inputs, nixos-hardware, username, host, catppuccin, ... }:
+{ config, lib, pkgs, inputs, nixos-hardware, xremap, username, host, catppuccin, ... }:
 
 {
   imports = [
@@ -14,7 +14,25 @@
     ./xorg/i3wm
 
     nixos-hardware.nixosModules.lenovo-thinkpad-l480
+    xremap.nixosModules.default
   ];
+
+  services.xremap = {
+    userName = "miu";
+    serviceMode = "system";
+    config = {
+      modmap = [
+        {
+          name = "CapsLock -> Ctrl";
+          remap = { CapsLock = "Ctrl_L"; };
+        }
+        {
+          name = "Ctrl -> CapsLock";
+          remap = { Ctrl_L = "CapsLock"; };
+        }
+      ];
+    };
+  };
 
   catppuccin = {
     flavor = "frappe";

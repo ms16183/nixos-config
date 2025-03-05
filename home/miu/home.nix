@@ -41,8 +41,9 @@
     mpd
     ncmpcpp
     spotify-player
-    # imageviewer
+    # image viewer
     feh
+    vlc
     mcomix
     # filer
     ranger
