@@ -22,7 +22,6 @@
       greeters.gtk = {
         indicators = [
           "~spacer"
-          "~host"
           "~clock"
           "~session"
           "~language"
