@@ -13,7 +13,7 @@
 
     ./xorg/i3wm
 
-    #nixos-hardware.nixosModules.lenovo-thinkpad-l480
+    nixos-hardware.nixosModules.lenovo-thinkpad-l480
   ];
 
   catppuccin = {
