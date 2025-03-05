@@ -3,6 +3,7 @@
 {
   environment.pathsToLink = [ "/libexec" ];
 
+  # i3+lightdm
   services.xserver = {
     enable = true;
     desktopManager = {
@@ -39,6 +40,13 @@
       };
     };
   };
+  # screen lock
+  programs.xss-lock = {
+    enable = true;
+    lockerCommand = "${pkgs.i3lock}/bin/i3lock";
+  };
+
+  # default session
   services.displayManager = {
     defaultSession = "none+i3";
   };
