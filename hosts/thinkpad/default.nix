@@ -10,6 +10,7 @@
 
     ./programs/i18n
     ./programs/font
+    ./programs/tlp
 
     ./xorg/i3wm
 
@@ -105,9 +106,10 @@
     jack.enable = true;
     pulse.enable = true;
   };
-  services.power-profiles-daemon = {
-    enable = true;
-  };
+
+  #services.power-profiles-daemon = {
+  #  enable = true;
+  #};
 
   # S.M.A.R.T.
   services.smartd = {
@@ -150,6 +152,8 @@
     pamixer
     # wireless
     wirelesstools
+    # backlight
+    brightnessctl
   ];
 
   system.stateVersion = "24.11";
