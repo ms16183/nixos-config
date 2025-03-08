@@ -40,6 +40,14 @@
     fcitx5.enable = true;
   };
 
+  services.udev = {
+    enable = true;
+    extraRules = ''
+    ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod o+w /sys/class/backlight/intel_backlight/brightness"
+    '';
+    #ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod o+w /sys/class/backlight/%k/brightness"
+  };
+
   # os user
   users.users = {
     ${username} = {
