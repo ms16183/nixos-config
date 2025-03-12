@@ -45,7 +45,6 @@
     extraRules = ''
     ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod o+w /sys/class/backlight/intel_backlight/brightness"
     '';
-    #ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod o+w /sys/class/backlight/%k/brightness"
   };
 
   # os user
