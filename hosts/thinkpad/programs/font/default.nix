@@ -7,7 +7,9 @@
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
       noto-fonts-emoji
-      nerdfonts
+      #nerdfonts
+      nerd-fonts.noto           # for polybar settings
+      nerd-fonts.jetbrains-mono
       siji
       symbola
       font-awesome

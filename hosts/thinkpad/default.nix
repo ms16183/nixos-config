@@ -105,7 +105,7 @@
   };
 
   # sound
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -163,6 +163,6 @@
     brightnessctl
   ];
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
 
