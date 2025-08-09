@@ -26,12 +26,11 @@
       enable = true;
       settings = {
         editor = "vim";
-        animation = "matrix";
+        #animation = "matrix";
         save = true;
       };
     };
     defaultSession = "Hyprland";
   };
-
 }
 

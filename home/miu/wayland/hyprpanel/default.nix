@@ -1,6 +1,15 @@
 { self, pkgs, lib, ...}:
 
 {
+
+  gtk = {
+    enable = true;
+    iconTheme = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+    };
+  };
+
   programs.hyprpanel = {
     enable = true;
     settings = {
@@ -65,7 +74,8 @@
       theme = {
         bar.transparent = true;
         font = {
-          name = "CaskaydiaCove NF";
+          #name = "CaskaydiaCove Nerd Font, Symbols Nerd Font";
+          name = "JetBrainsMono Nerd Font";
           size = "14px";
         };
       };
