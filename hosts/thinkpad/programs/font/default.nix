@@ -9,6 +9,7 @@
       noto-fonts-emoji
       #nerdfonts
       nerd-fonts.noto           # for polybar settings
+      nerd-fonts.symbols-only
       nerd-fonts.jetbrains-mono
       siji
       #symbola                  # this font cannot install because source(archive.org) dropped it.

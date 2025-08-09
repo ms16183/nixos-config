@@ -11,10 +11,13 @@
     ./programs/vim
     ./programs/zsh
 
-    ./xorg/dunst
-    ./xorg/i3wm
-    ./xorg/picom
-    ./xorg/polybar
+    ./wayland/hyprland
+    ./wayland/hyprpanel
+
+    #./xorg/dunst
+    #./xorg/i3wm
+    #./xorg/picom
+    #./xorg/polybar
     ./xorg/rofi
   ];
 
@@ -24,6 +27,9 @@
     alacritty.enable = true;
     starship.enable = true;
     zsh-syntax-highlighting.enable = true;
+
+    hyprland.enable = true;
+    hyprlock.enable = true;
 
     dunst.enable = true;
     polybar.enable = true;
@@ -66,6 +72,7 @@
     figlet
     cowsay
     tty-clock
+    fastfetch
     pfetch
   ];
 
