@@ -54,7 +54,6 @@
     # analyze
     gdb
     radare2
-    ida-free
     # learning
     obsidian
     # crypt

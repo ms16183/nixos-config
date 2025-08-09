@@ -11,7 +11,7 @@
       nerd-fonts.noto           # for polybar settings
       nerd-fonts.jetbrains-mono
       siji
-      symbola
+      #symbola                  # this font cannot install because source(archive.org) dropped it.
       font-awesome
     ];
     fontconfig = {
