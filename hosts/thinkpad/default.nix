@@ -12,9 +12,10 @@
     ./programs/font
     ./programs/tlp
 
-    ./xorg/i3wm
+    #./xorg/i3wm
+    ./wayland/hyprland
 
-    nixos-hardware.nixosModules.lenovo-thinkpad-l480
+    nixos-hardware.nixosModules.lenovo-thinkpad-x280
     xremap.nixosModules.default
   ];
 
@@ -124,6 +125,19 @@
     autodetect = true;
   };
 
+  # battery
+  services.upower = {
+    enable = true;
+  };
+
+  # bluetooth
+  services.blueman = {
+    enable = true;
+  };
+  hardware.bluetooth = {
+    enable = true;
+  };
+
   # commands
   environment.systemPackages = with pkgs; [
     # compression
@@ -148,6 +162,8 @@
     sysstat
     pciutils
     usbutils
+    bluez
+    bluez-tools
     # network
     dnsutils
     nmap
