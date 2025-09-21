@@ -10,6 +10,7 @@
     ./programs/mpd
     ./programs/vim
     ./programs/zsh
+    ./programs/rofi
 
     ./wayland/hyprland
     ./wayland/hyprpanel
@@ -18,7 +19,6 @@
     #./xorg/i3wm
     #./xorg/picom
     #./xorg/polybar
-    ./xorg/rofi
   ];
 
   catppuccin = {
