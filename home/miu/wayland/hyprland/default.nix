@@ -11,6 +11,7 @@
       "$filer" = "ranger";
       "$mainMod" = "SUPER";
       "$editor" = "vim";
+      "$launcher" = "rofi";
 
       exec = [
         "fcitx5"
@@ -71,7 +72,8 @@
       bind = [
         "$mainMod, RETURN, exec, $terminal"
         "$mainMod, E, exec, $filer"
-        "$mainMod, R, exec, hyprctl reload"
+        "$mainMod, R, exec, $launcher -show drun"
+        "$mainMod, P, exec, hyprctl reload"
         "$mainMod, Q, killactive"
         "$mainMod, M, Exit"
         "$mainMod, D, exec, brave"

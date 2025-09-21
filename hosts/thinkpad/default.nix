@@ -36,11 +36,6 @@
     };
   };
 
-  catppuccin = {
-    flavor = "frappe";
-    fcitx5.enable = true;
-  };
-
   services.udev = {
     enable = true;
     extraRules = ''

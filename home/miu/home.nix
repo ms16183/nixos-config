@@ -1,4 +1,4 @@
-{ lib, pkgs, username, catppuccin, ...}:
+{ lib, pkgs, username, catppuccin, stylix, ...}:
 
 {
   home.username = "${username}";
@@ -21,22 +21,24 @@
     #./xorg/polybar
   ];
 
-  catppuccin = {
-    flavor = "frappe";
+  stylix = {
+    enable = true;
 
-    alacritty.enable = true;
-    starship.enable = true;
-    zsh-syntax-highlighting.enable = true;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
+    polarity = "dark";
 
-    hyprland.enable = true;
-    hyprlock.enable = true;
+    autoEnable = true;
+    /*
+    targets = {
+      alacritty.enable = false;
+    };
+    */
 
-    dunst.enable = true;
-    polybar.enable = true;
-    rofi.enable = true;
-
-    fcitx5.enable = true;
-    cava.enable = true;
+    opacity = {
+      applications = 1.00;
+      terminal = 0.95;
+      popups = 0.90;
+    };
   };
 
   home.packages = with pkgs; [

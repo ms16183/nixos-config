@@ -22,6 +22,10 @@
     catppuccin = {
       url = "github:catppuccin/nix";
     };
+
+    stylix = {
+      url = "github:nix-community/stylix/release-25.05";
+    };
   };
 
   outputs = { 
@@ -31,6 +35,7 @@
     home-manager,
     xremap,
     catppuccin,
+    stylix,
     ... 
   } @ inputs:
   let
@@ -42,11 +47,12 @@
       ${host} = nixpkgs.lib.nixosSystem {
 
         system = "x86_64-linux";
-        specialArgs = { inherit inputs nixos-hardware xremap username host catppuccin; };
+        specialArgs = { inherit inputs nixos-hardware xremap username host catppuccin stylix; };
 
         modules = [
           ./hosts/${host}
-          catppuccin.nixosModules.catppuccin
+          #catppuccin.nixosModules.catppuccin
+          stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true; 
             home-manager.useUserPackages = true; 
@@ -55,7 +61,8 @@
             home-manager.users.${username} = {
               imports = [
                 ./home/${username}/home.nix
-                catppuccin.homeModules.catppuccin
+                #catppuccin.homeModules.catppuccin
+                stylix.homeModules.stylix
               ];
             };
           }
