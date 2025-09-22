@@ -149,6 +149,7 @@
     wget
     lsof
     killall
+    exiftool
     # system call
     ltrace
     strace

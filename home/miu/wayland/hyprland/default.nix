@@ -7,7 +7,7 @@
 
     settings = {
 
-      "$terminal" = "alacritty";
+      "$terminal" = "wezterm";
       "$filer" = "ranger";
       "$mainMod" = "SUPER";
       "$editor" = "vim";

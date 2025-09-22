@@ -5,12 +5,14 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ./programs/alacritty
+    #./programs/alacritty
+    ./programs/wezterm
     ./programs/git
     ./programs/mpd
     ./programs/vim
     ./programs/zsh
     ./programs/rofi
+    ./programs/fastfetch
 
     ./wayland/hyprland
     ./wayland/hyprpanel
@@ -74,7 +76,6 @@
     figlet
     cowsay
     tty-clock
-    fastfetch
     pfetch
   ];
 
