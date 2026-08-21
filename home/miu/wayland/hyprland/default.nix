@@ -2,117 +2,22 @@
 
 {
   wayland.windowManager.hyprland = {
-    
+
     enable = true;
+    # hyprlang was deprecated in Hyprland 0.55 in favor of this lua config
+    # (home.stateVersion is 25.05, so the module's own default would still
+    # pick "hyprlang" here without this override).
+    configType = "lua";
 
-    settings = {
-
-      "$terminal" = "wezterm";
-      "$filer" = "ranger";
-      "$mainMod" = "SUPER";
-      "$editor" = "vim";
-      "$launcher" = "rofi";
-
-      exec = [
-        "fcitx5"
-        "killall -q hyprpanel ; sleep .5 ; hyprpanel"
-      ];
-
-      general = {
-        gaps_in = 3;
-        gaps_out = 5;
-        border_size = 3;
-
-        layout = "dwindle";
-      };
-
-      decoration = {
-        rounding = 10;
-        rounding_power = 2;
-        active_opacity = 0.95;
-        inactive_opacity = 0.90;
-        blur = {
-          enabled = true;
-          size = 3;
-          passes = 1;
-          vibrancy = 0.1696;
-        };
-        shadow = {
-          enabled = false;
-        };
-      };
-
-      input = {
-        kb_layout = "us";
-
-        follow_mouse = 1;
-        sensitivity = 0;
-      };
-
-      master = {
-        new_status = "master";
-      };
-
-      misc = {
-        force_default_wallpaper = 2;
-        disable_hyprland_logo = false;
-
-        animate_manual_resizes = true;
-      };
-
-      bindl = [
-        ",switch:off:Lid Switch, exec, hyprlock --immediate-render"
-      ];
-
-      bindm = [
-        "$mainMod, mouse:272, movewindow"
-        "$mainMod, mouse:273, resizewindow"
-      ];
-
-      bind = [
-        "$mainMod, RETURN, exec, $terminal"
-        "$mainMod, E, exec, $filer"
-        "$mainMod, R, exec, $launcher -show drun"
-        "$mainMod, P, exec, hyprctl reload"
-        "$mainMod, Q, killactive"
-        "$mainMod, M, Exit"
-        "$mainMod, D, exec, brave"
-
-        "$mainMod, V, togglefloating"
-
-        "$mainMod, F, fullscreen, 0"
-
-        "$mainMod,  left, movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod,    up, movefocus, u"
-        "$mainMod,  down, movefocus, d"
-
-        "$mainMod ALT,  left, swapwindow, l"
-        "$mainMod ALT, right, swapwindow, r"
-        "$mainMod ALT,    up, swapwindow, u"
-        "$mainMod ALT,  down, swapwindow, d"
-
-        "$mainMod SHIFT,  LEFT, resizeactive, -100, 0"
-        "$mainMod SHIFT, right, resizeactive,  100, 0"
-        "$mainMod SHIFT,    up, resizeactive, 0, -100"
-        "$mainMod SHIFT,  down, resizeactive, 0,  100"
-
-      ]
-      ++ (
-        builtins.concatLists (
-          builtins.genList (i:
-            let
-              ws = i + 1;
-            in [
-              "$mainMod      , code:1${toString i}, workspace, ${toString ws}"
-              "$mainMod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          )
-        9)
-      );
-
-    };
+    # Kept in a plain .lua file (hyprland.lua) rather than inlined here,
+    # since binds need `hl.dsp.*` dispatcher calls as arguments and writing
+    # that through `settings` would mean wrapping every one of them in
+    # `lib.generators.mkLuaInline` from the Nix side for little benefit.
+    extraConfig = builtins.readFile ./hyprland.lua;
   };
+
+  # screenshot: win+shift+s copies a region selection to the clipboard
+  home.packages = [ pkgs.grimblast ];
 
   #home.pointerCursor.hyprcursor = {
   #  enable = true;
@@ -121,6 +26,64 @@
 
   programs.hyprlock = {
     enable = true;
+
+    # centered clock over the live desktop (a screenshot taken at lock time,
+    # blurred to match the bar), matched to vast-shell's Lock-Screen. colors
+    # are Catppuccin Frappe to match the bar (home/miu/wayland/quickshell).
+    settings = {
+      general = {
+        hide_cursor = false;
+        ignore_empty_input = true;
+      };
+
+      background = [
+        {
+          path = "screenshot";
+          blur_size = 3;
+          blur_passes = 2;
+        }
+      ];
+
+      label = [
+        {
+          text = "$TIME";
+          font_size = 90;
+          font_family = "JetBrainsMono Nerd Font";
+          color = "rgb(198, 208, 245)"; # frappe text
+          position = "0, 100";
+          halign = "center";
+          valign = "center";
+        }
+        {
+          text = ''cmd[update:60000] date +"%A, %B %d"'';
+          font_size = 22;
+          font_family = "JetBrainsMono Nerd Font";
+          color = "rgb(198, 208, 245)"; # frappe text
+          position = "0, 30";
+          halign = "center";
+          valign = "center";
+        }
+      ];
+
+      input-field = [
+        {
+          size = "20%, 5%";
+          outline_thickness = 3;
+          inner_color = "rgba(48, 52, 70, 0.4)"; # frappe base
+          outer_color = "rgba(140, 170, 238, 0.8)"; # frappe blue
+          check_color = "rgba(166, 209, 137, 0.9)"; # frappe green
+          fail_color = "rgba(231, 130, 132, 0.9)"; # frappe red
+          font_color = "rgb(198, 208, 245)"; # frappe text
+          fade_on_empty = false;
+          rounding = 20;
+          font_family = "JetBrainsMono Nerd Font";
+          placeholder_text = "Password...";
+          position = "0, -120";
+          halign = "center";
+          valign = "center";
+        }
+      ];
+    };
   };
 
   services.hyprpaper = {

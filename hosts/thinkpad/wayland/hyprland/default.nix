@@ -30,7 +30,7 @@
         save = true;
       };
     };
-    defaultSession = "Hyprland";
+    defaultSession = "hyprland";
   };
 }
 

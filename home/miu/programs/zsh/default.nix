@@ -1,8 +1,11 @@
-{ lib, pkgs, ...}:
+{ lib, pkgs, config, ...}:
 
 {
   programs.zsh = {
     enable = true;
+    # opt into the post-26.05 default: keep zsh dotfiles under
+    # $XDG_CONFIG_HOME instead of loose in $HOME.
+    dotDir = "${config.xdg.configHome}/zsh";
     autocd = true;
     enableCompletion = true;
     autosuggestion.enable = true;

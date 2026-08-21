@@ -74,6 +74,9 @@
   security = {
      rtkit.enable = true;
     polkit.enable = true;
+    # required for hyprlock to actually authenticate; without this its
+    # password prompt has no PAM stack to check against.
+    pam.services.hyprlock = {};
   };
 
   # time zone
@@ -152,6 +155,7 @@
     lsof
     killall
     exiftool
+    wev
     # system call
     ltrace
     strace

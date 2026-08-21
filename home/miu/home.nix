@@ -15,7 +15,8 @@
     ./programs/fastfetch
 
     ./wayland/hyprland
-    ./wayland/hyprpanel
+    #./wayland/hyprpanel
+    ./wayland/quickshell
 
     #./xorg/dunst
     #./xorg/i3wm
@@ -26,15 +27,30 @@
   stylix = {
     enable = true;
 
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
+    # matches the Catppuccin Frappe used by the QuickShell bar/hyprlock
+    # (which stylix doesn't theme itself — no quickshell target exists),
+    # so autoEnable'd apps (terminal, GTK, rofi, qt, ...) match too.
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-frappe.yaml";
     polarity = "dark";
 
     autoEnable = true;
-    /*
+
+    # the NixOS-level stylix module (hosts/thinkpad/default.nix's stylix
+    # import) already applies stylix's package overlay to the shared pkgs;
+    # with home-manager.useGlobalPkgs, this home-manager-level copy of the
+    # same overlay is discarded anyway, just with a deprecation warning.
+    overlays.enable = false;
+
     targets = {
+      # hyprlock is hand-themed with Catppuccin Frappe in
+      # wayland/hyprland/default.nix (matching the quickshell bar); stylix's
+      # own hyprlock target sets `settings.background` as an attrset while
+      # ours is a list, which conflicts ("defined multiple times").
+      hyprlock.enable = false;
+      /*
       alacritty.enable = false;
+      */
     };
-    */
 
     opacity = {
       applications = 1.00;
@@ -84,6 +100,9 @@
     userDirs = {
       enable = true;
       createDirectories = true;
+      # pin the pre-26.05 default (XDG_*_DIR session vars exported) rather
+      # than silently dropping them.
+      setSessionVariables = true;
     };
   };
 

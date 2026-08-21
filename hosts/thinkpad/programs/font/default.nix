@@ -7,7 +7,7 @@
       noto-fonts
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       #nerdfonts
       nerd-fonts.noto           # for polybar settings
       nerd-fonts.symbols-only
