@@ -16,6 +16,10 @@ import QtQuick
 // translucent and blurred by Hyprland (see layerrule in
 // wayland/hyprland/default.nix), matching regular window transparency.
 ShellRoot {
+    SettingsWindow {
+        id: settingsWindow
+    }
+
     PanelWindow {
         id: bar
 
@@ -66,6 +70,9 @@ ShellRoot {
             BatteryStatus {}
             NotificationsIndicator {}
             Clock {}
+            SettingsButton {
+                onClicked: settingsWindow.visible = !settingsWindow.visible
+            }
         }
     }
 }

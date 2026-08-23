@@ -70,11 +70,21 @@ Item {
         }
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: mouse => {
-            if (mouse.button === Qt.RightButton) root.muted = !root.muted;
-            else popup.open = !popup.open;
+        acceptedButtons: Qt.RightButton
+        onClicked: root.muted = !root.muted
+        onEntered: {
+            hideTimer.stop();
+            popup.open = true;
         }
+        onExited: hideTimer.restart()
+    }
+
+    // debounce hiding too, so crossing the boundary between the icon and
+    // the popup itself doesn't cause a flicker
+    Timer {
+        id: hideTimer
+        interval: 150
+        onTriggered: popup.open = false
     }
 
     PopupWindow {
@@ -93,7 +103,11 @@ Item {
         anchor.item: root
         anchor.edges: Edges.Bottom | Edges.Right
         anchor.gravity: Edges.Bottom | Edges.Left
-        anchor.margins.top: 8
+        // negative bottom margin (not a positive top margin — anchor.margins
+        // shrinks the anchor *rect*, and edges:Bottom keys off the rect's
+        // bottom edge, so only the bottom margin affects the gap here)
+        // pushes the popup 8px clear of the bar below the icon.
+        anchor.margins.bottom: -8
 
         implicitWidth: 280
         implicitHeight: targetHeight

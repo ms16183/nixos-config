@@ -77,6 +77,8 @@
     python314
     # C/C++
     libgcc
+    # AI coding
+    claude-code
     # analyze
     gdb
     radare2
@@ -84,6 +86,8 @@
     obsidian
     # crypt
     veracrypt
+    # social
+    discord
     # util
     eza
     bat

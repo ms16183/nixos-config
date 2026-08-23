@@ -140,7 +140,11 @@ Item {
         anchor.item: root
         anchor.edges: Edges.Bottom | Edges.Left
         anchor.gravity: Edges.Bottom | Edges.Right
-        anchor.margins.top: 8
+        // negative bottom margin (not a positive top margin — anchor.margins
+        // shrinks the anchor *rect*, and edges:Bottom keys off the rect's
+        // bottom edge, so only the bottom margin affects the gap here)
+        // pushes the popup 8px clear of the bar below the icon.
+        anchor.margins.bottom: -8
 
         implicitWidth: 200
         implicitHeight: 64

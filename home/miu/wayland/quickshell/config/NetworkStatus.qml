@@ -57,11 +57,20 @@ Item {
             margins: -8
         }
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
+        onEntered: {
+            hideTimer.stop();
             if (root.wifiDevice) root.wifiDevice.scannerEnabled = true;
-            popup.open = !popup.open;
+            popup.open = true;
         }
+        onExited: hideTimer.restart()
+    }
+
+    // debounce hiding too, so crossing the boundary between the icon and
+    // the popup itself doesn't cause a flicker
+    Timer {
+        id: hideTimer
+        interval: 150
+        onTriggered: popup.open = false
     }
 
     PopupWindow {
@@ -79,7 +88,11 @@ Item {
         anchor.item: root
         anchor.edges: Edges.Bottom | Edges.Left
         anchor.gravity: Edges.Bottom | Edges.Right
-        anchor.margins.top: 8
+        // negative bottom margin (not a positive top margin — anchor.margins
+        // shrinks the anchor *rect*, and edges:Bottom keys off the rect's
+        // bottom edge, so only the bottom margin affects the gap here)
+        // pushes the popup 8px clear of the bar below the icon.
+        anchor.margins.bottom: -8
 
         implicitWidth: 260
         implicitHeight: targetHeight
