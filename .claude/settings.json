@@ -14,7 +14,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-26.05/pkgs/by-name/di/discord/package.nix\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-26.05/pkgs/applications/networking/instant-messengers/discord/default.nix\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-26.05/pkgs/top-level/all-packages.nix\")",
-      "Bash(xxd)"
+      "Bash(xxd)",
+      "Bash(echo \"removed: $?\")"
     ]
   }
 }

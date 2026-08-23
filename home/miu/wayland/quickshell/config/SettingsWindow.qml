@@ -1,5 +1,7 @@
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Io
 
 // General Settings window — scoped to only the values that are genuinely
 // live/rebuild-free today (Wi-Fi/Bluetooth power, volume, wallpaper via
@@ -28,7 +30,13 @@ FloatingWindow {
         border.width: 1
 
         Row {
-            anchors.fill: parent
+            id: mainRow
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                bottom: powerBar.top
+            }
 
             Column {
                 id: sidebar
@@ -101,6 +109,136 @@ FloatingWindow {
                     WallpaperSettingsSection { width: content.width; visible: root.activeSection === "wallpaper" }
                     DisplaySettingsSection { width: content.width; visible: root.activeSection === "display" }
                     AboutSettingsSection { width: content.width; visible: root.activeSection === "about" }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: powerBar.top
+            }
+            height: 1
+            color: colors.surface1
+        }
+
+        // lock/logout/restart/shutdown — always visible regardless of the
+        // active section. "Log Out" asks Hyprland itself to quit (the
+        // "exit" dispatcher, sent over the same IPC socket Hyprland.dispatch()
+        // already uses elsewhere in this bar); restart/shutdown are plain
+        // systemd calls; lock just runs hyprlock directly, same binary the
+        // mainMod+L keybind in hyprland.lua already launches.
+        Item {
+            id: powerBar
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+            height: 48
+
+            Process { id: actionProc }
+            function run(args) {
+                if (actionProc.running) return;
+                actionProc.command = args;
+                actionProc.running = true;
+            }
+
+            Row {
+                anchors.centerIn: parent
+                spacing: 12
+
+                Rectangle {
+                    width: 90
+                    height: 28
+                    radius: 6
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Qt.alpha(colors.overlay0, 0.3)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Lock"
+                        color: colors.subtext0
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 11
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: powerBar.run(["hyprlock", "--immediate-render"])
+                    }
+                }
+
+                Rectangle {
+                    width: 90
+                    height: 28
+                    radius: 6
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Qt.alpha(colors.overlay0, 0.3)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Log Out"
+                        color: colors.subtext0
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 11
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: Hyprland.dispatch("exit")
+                    }
+                }
+
+                Rectangle {
+                    width: 90
+                    height: 28
+                    radius: 6
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Qt.alpha(colors.overlay0, 0.3)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Restart"
+                        color: colors.subtext0
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 11
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: powerBar.run(["systemctl", "reboot"])
+                    }
+                }
+
+                Rectangle {
+                    width: 90
+                    height: 28
+                    radius: 6
+                    color: Qt.alpha(colors.red, 0.12)
+                    border.width: 1
+                    border.color: Qt.alpha(colors.red, 0.4)
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Shut Down"
+                        color: colors.red
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 11
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: powerBar.run(["systemctl", "poweroff"])
+                    }
                 }
             }
         }

@@ -1,15 +1,16 @@
 import QtQuick
-import Quickshell.Hyprland
 
-// placeholder for hyprpanel's "dashboard" module.
-// hyprpanel's own dashboard has directories/resourceUsage disabled, so for
-// now this just opens the app launcher. build out a real quick-settings
-// panel here later.
+// opens SettingsWindow.qml (shell.qml wires `onClicked` to toggle the
+// window's `visible`, since ids aren't visible across component files).
+// the app launcher this used to open is still reachable via the
+// mainMod+R keybind in hyprland.lua.
 Item {
     id: root
 
     implicitWidth: 32
     implicitHeight: 28
+
+    signal clicked()
 
     Colors { id: colors }
 
@@ -27,6 +28,6 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: Hyprland.dispatch("exec rofi -show drun")
+        onClicked: root.clicked()
     }
 }

@@ -51,7 +51,9 @@ ShellRoot {
                 verticalCenter: parent.verticalCenter
             }
             spacing: tokens.spacingNormal
-            DashboardButton {}
+            DashboardButton {
+                onClicked: settingsWindow.visible = !settingsWindow.visible
+            }
             Workspaces {}
         }
 
@@ -70,9 +72,6 @@ ShellRoot {
             BatteryStatus {}
             NotificationsIndicator {}
             Clock {}
-            SettingsButton {
-                onClicked: settingsWindow.visible = !settingsWindow.visible
-            }
         }
     }
 }
