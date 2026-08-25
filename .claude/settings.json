@@ -15,7 +15,11 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-26.05/pkgs/applications/networking/instant-messengers/discord/default.nix\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/NixOS/nixpkgs/nixos-26.05/pkgs/top-level/all-packages.nix\")",
       "Bash(xxd)",
-      "Bash(echo \"removed: $?\")"
+      "Bash(echo \"removed: $?\")",
+      "Bash(xargs grep -l \"hyprpaper\")",
+      "Bash(grep -rn \"modmask\\\\b\" /tmp/hl0554/src/managers/KeybindManager.* 2>/dev/null | head -10 *)",
+      "Read(//c//**)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/nix-community/home-manager/release-26.05/modules/services/hyprpaper.nix\")"
     ]
   }
 }

@@ -12,6 +12,13 @@ FloatingWindow {
     id: root
 
     property string activeSection: "network"
+    readonly property var sectionLabels: ({
+        network: "Network",
+        audio: "Audio",
+        wallpaper: "Wallpaper",
+        display: "Display",
+        about: "About"
+    })
 
     title: "Settings"
     visible: false
@@ -104,6 +111,14 @@ FloatingWindow {
                     width: parent.width - 32
                     spacing: 16
 
+                    Text {
+                        text: root.sectionLabels[root.activeSection] ?? ""
+                        color: colors.text
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.bold: true
+                    }
+
                     NetworkSettingsSection { width: content.width; visible: root.activeSection === "network" }
                     AudioSettingsSection { width: content.width; visible: root.activeSection === "audio" }
                     WallpaperSettingsSection { width: content.width; visible: root.activeSection === "wallpaper" }
@@ -124,11 +139,17 @@ FloatingWindow {
         }
 
         // lock/logout/restart/shutdown — always visible regardless of the
-        // active section. "Log Out" asks Hyprland itself to quit (the
-        // "exit" dispatcher, sent over the same IPC socket Hyprland.dispatch()
-        // already uses elsewhere in this bar); restart/shutdown are plain
-        // systemd calls; lock just runs hyprlock directly, same binary the
-        // mainMod+L keybind in hyprland.lua already launches.
+        // active section. "Log Out" asks Hyprland itself to quit via
+        // Hyprland.dispatch(), sent over the same IPC socket used elsewhere
+        // in this bar — but since Hyprland 0.55, the "dispatch" socket verb
+        // evaluates its argument as a Lua expression that must produce a
+        // dispatcher object, not a bare legacy dispatcher name (confirmed:
+        // `hyprctl dispatch exit` itself fails with "hl.dispatch: expected
+        // a dispatcher", the fix being `hl.dsp.exit()` — same form as the
+        // wiki's `hyprctl dispatch 'hl.dsp.submap("reset")'` example).
+        // restart/shutdown are plain systemd calls; lock just runs hyprlock
+        // directly, same binary the mainMod+L keybind in hyprland.lua
+        // already launches.
         Item {
             id: powerBar
             anchors {
@@ -191,7 +212,7 @@ FloatingWindow {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: Hyprland.dispatch("exit")
+                        onClicked: Hyprland.dispatch("hl.dsp.exit()")
                     }
                 }
 

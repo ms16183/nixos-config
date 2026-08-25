@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell
 import Quickshell.Services.UPower
 
 // hyprpanel: battery.label = false -> icon only. hover for percentage + status.
@@ -102,6 +101,7 @@ Item {
     }
 
     MouseArea {
+        id: mouseArea
         // pad the hover region beyond the 20x20 icon so tiny mouse
         // movements near the edge don't flicker the popup open/closed.
         anchors {
@@ -109,93 +109,32 @@ Item {
             margins: -8
         }
         hoverEnabled: true
-        onEntered: {
-            hideTimer.stop();
-            popup.open = true;
-        }
-        onExited: hideTimer.restart()
     }
 
-    // debounce hiding too, so crossing the boundary between the icon and
-    // the popup itself doesn't cause a flicker
-    Timer {
-        id: hideTimer
-        interval: 150
-        onTriggered: popup.open = false
-    }
-
-    PopupWindow {
+    AnimatedPopup {
         id: popup
-
-        property bool open: false
-        // NOTE: the window's own implicitHeight must stay fixed — animating
-        // a wlr-layer-shell popup surface down to 0px height crashed the
-        // whole quickshell process (which took the bar down with it). the
-        // "grow" effect below animates a plain Item inside a fixed-size
-        // window instead.
-        visible: open || revealAnim.running
-
-        // anchor to the bottom of the icon so the popup opens below the
-        // bar instead of overlapping it.
-        anchor.item: root
-        anchor.edges: Edges.Bottom | Edges.Left
-        anchor.gravity: Edges.Bottom | Edges.Right
-        // negative bottom margin (not a positive top margin — anchor.margins
-        // shrinks the anchor *rect*, and edges:Bottom keys off the rect's
-        // bottom edge, so only the bottom margin affects the gap here)
-        // pushes the popup 8px clear of the bar below the icon.
-        anchor.margins.bottom: -8
-
+        anchorItem: root
+        iconHovered: mouseArea.containsMouse
+        targetHeight: 64
         implicitWidth: 200
-        implicitHeight: 64
-        color: "transparent"
 
-        Item {
-            id: reveal
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-            }
-            clip: true
-            height: popup.open ? 64 : 0
+        Column {
+            anchors.centerIn: parent
+            spacing: 4
 
-            Behavior on height {
-                NumberAnimation {
-                    id: revealAnim
-                    duration: tokens.spatialDuration
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: tokens.spatialCurve
-                }
+            Text {
+                text: Math.round(root.percentage * 100) + "%"
+                color: colors.text
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 14
+                font.bold: true
             }
 
-            Rectangle {
-                width: parent.width
-                height: 64
-                radius: tokens.roundingNormal
-                color: colors.mantle
-                border.color: colors.surface1
-                border.width: 1
-
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 4
-
-                    Text {
-                        text: Math.round(root.percentage * 100) + "%"
-                        color: colors.text
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: 14
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: root.device ? UPowerDeviceState.toString(root.device.state) : "Unknown"
-                        color: colors.subtext0
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: 12
-                    }
-                }
+            Text {
+                text: root.device ? UPowerDeviceState.toString(root.device.state) : "Unknown"
+                color: colors.subtext0
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 12
             }
         }
     }

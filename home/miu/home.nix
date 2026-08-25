@@ -11,7 +11,8 @@
     ./programs/mpd
     ./programs/vim
     ./programs/zsh
-    ./programs/rofi
+    #./programs/rofi
+    ./programs/hyprlauncher
     ./programs/fastfetch
 
     ./wayland/hyprland

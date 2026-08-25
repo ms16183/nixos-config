@@ -13,9 +13,22 @@ Column {
     readonly property string wallpaperDir: Quickshell.env("HOME") + "/Pictures/wallpapers"
     property var files: []
     property string activeWallpaper: ""
+    property string pendingWallpaper: ""
+    property string lastError: ""
 
     Colors { id: colors }
     Tokens { id: tokens }
+
+    // re-scan every time this section is opened, not just once at
+    // quickshell startup, so wallpapers added/removed later still show up
+    onVisibleChanged: if (visible) rescan()
+
+    function rescan() {
+        lastError = "";
+        files = [];
+        listProc.running = false;
+        listProc.running = true;
+    }
 
     Text {
         text: root.wallpaperDir
@@ -25,7 +38,17 @@ Column {
     }
 
     Text {
-        visible: root.files.length === 0
+        visible: root.lastError !== ""
+        width: root.width
+        text: root.lastError
+        color: colors.red
+        font.family: "JetBrainsMono Nerd Font"
+        font.pixelSize: 11
+        wrapMode: Text.Wrap
+    }
+
+    Text {
+        visible: root.files.length === 0 && root.lastError === ""
         text: "No images found"
         color: colors.subtext0
         font.family: "JetBrainsMono Nerd Font"
@@ -63,9 +86,10 @@ Column {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         if (applyProc.running) return;
+                        root.lastError = "";
+                        root.pendingWallpaper = modelData;
                         applyProc.command = ["hyprctl", "hyprpaper", "wallpaper", "," + modelData + ",cover"];
                         applyProc.running = true;
-                        root.activeWallpaper = modelData;
                     }
                 }
             }
@@ -79,7 +103,15 @@ Column {
         stdout: SplitParser {
             onRead: data => { if (data) root.files = [...root.files, data]; }
         }
-        onExited: activeProc.running = true
+        stderr: SplitParser {
+            onRead: data => { if (data) root.lastError = data; }
+        }
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode !== 0 && root.lastError === "") {
+                root.lastError = "find exited with code " + exitCode + " — does " + root.wallpaperDir + " exist?";
+            }
+            activeProc.running = true;
+        }
     }
 
     Process {
@@ -93,9 +125,24 @@ Column {
         }
     }
 
+    // hyprctl's own CLI prints its "error: ..." messages to stdout, not
+    // stderr (confirmed in hyprctl/src/main.cpp: `log()` is a plain
+    // `std::println`) — both streams need watching, or a real failure
+    // (e.g. hyprpaper not running, an invalid path) shows nothing at all.
     Process {
         id: applyProc
+        stdout: SplitParser {
+            onRead: data => { if (data) root.lastError = data; }
+        }
+        stderr: SplitParser {
+            onRead: data => { if (data) root.lastError = data; }
+        }
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode === 0 && root.lastError === "") {
+                root.activeWallpaper = root.pendingWallpaper;
+            }
+        }
     }
 
-    Component.onCompleted: listProc.running = true
+    Component.onCompleted: rescan()
 }

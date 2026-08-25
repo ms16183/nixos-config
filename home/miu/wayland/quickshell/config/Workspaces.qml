@@ -53,7 +53,11 @@ Row {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Hyprland.dispatch("workspace " + (index + 1))
+                // Hyprland 0.55's "dispatch" socket verb evaluates its
+                // argument as raw Lua (`hl.dispatch(<arg>)`, no legacy
+                // "name arg1 arg2" compat parsing) — must be a Lua
+                // expression producing a dispatcher, e.g. hl.dsp.focus(...).
+                onClicked: Hyprland.dispatch("hl.dsp.focus({workspace = " + (index + 1) + "})")
             }
         }
     }

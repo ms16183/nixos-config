@@ -47,6 +47,8 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: Hyprland.dispatch("exec fcitx5-remote -t")
+        // see Workspaces.qml for why this is Lua syntax, not the old
+        // "exec <cmd>" positional form.
+        onClicked: Hyprland.dispatch("hl.dsp.exec_cmd(\"fcitx5-remote -t\")")
     }
 }
