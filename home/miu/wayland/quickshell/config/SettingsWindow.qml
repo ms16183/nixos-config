@@ -23,10 +23,11 @@ FloatingWindow {
         audio: "Audio",
         wallpaper: "Wallpaper",
         display: "Display",
+        clock: "Clock",
         about: "About"
     })
     property var sectionAnchors: ({})
-    readonly property var sectionOrder: ["network", "audio", "wallpaper", "display", "about"]
+    readonly property var sectionOrder: ["network", "audio", "wallpaper", "display", "clock", "about"]
 
     function scrollTo(key) {
         const item = sectionAnchors[key];
@@ -49,6 +50,7 @@ FloatingWindow {
         if (visible) {
             wallpaperSection.rescan();
             aboutSection.refresh();
+            clockSection.refresh();
         }
     }
     implicitWidth: 620
@@ -188,6 +190,14 @@ FloatingWindow {
                     }
 
                     Column {
+                        id: clockAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.clock; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        ClockSettingsSection { id: clockSection; width: content.width }
+                    }
+
+                    Column {
                         id: aboutAnchor
                         width: content.width
                         spacing: 12
@@ -201,6 +211,7 @@ FloatingWindow {
                             audio: audioAnchor,
                             wallpaper: wallpaperAnchor,
                             display: displayAnchor,
+                            clock: clockAnchor,
                             about: aboutAnchor
                         };
                     }

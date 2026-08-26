@@ -5,10 +5,11 @@ import Quickshell.Io
 
 // Wi-Fi/Bluetooth power toggles (live bindings, same as the bar popups) plus
 // the same per-network/per-device list content those popups already show.
-// IPv4 details (method/address/gateway/DNS) aren't exposed by Quickshell's
-// own Networking API at all (checked: Device/Network/Wifi/Wired only expose
-// name/address/connected/state/security/signalStrength — nothing about IP
-// config), so that part shells out to `nmcli` directly instead.
+// Per-connection details (subnet/DHCP/DNS etc.) aren't exposed by
+// Quickshell's own Networking API at all, and rather than reimplement that
+// via `nmcli`, each list just links out to the real editor GUI
+// (nm-connection-editor / blueman-manager) — Wayland has no way to embed
+// their windows here, so they open as their own top-level windows.
 Column {
     id: root
     spacing: 16
@@ -176,8 +177,8 @@ Column {
 
         // Wayland has no XEmbed-style mechanism to embed another process's
         // window inside this one, so nm-connection-editor (subnet/DHCP/DNS
-        // per-connection editing that goes well beyond what's built above)
-        // just gets launched as its own window instead.
+        // per-connection editing) just gets launched as its own window
+        // instead.
         Rectangle {
             width: 200
             height: 28
@@ -186,12 +187,25 @@ Column {
             border.width: 1
             border.color: Qt.alpha(colors.overlay0, 0.3)
 
-            Text {
+            Row {
                 anchors.centerIn: parent
-                text: "Open Wi-Fi Connections…"
-                color: colors.subtext0
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 11
+                spacing: 6
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "\u{f03cc}" // md-open_in_new
+                    color: colors.subtext0
+                    font.family: "Symbols Nerd Font"
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Wi-Fi Connections"
+                    color: colors.subtext0
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 11
+                }
             }
 
             MouseArea {
@@ -206,13 +220,6 @@ Column {
         }
 
         Process { id: nmEditorProc }
-    }
-
-    Rectangle { width: root.width; height: 1; color: colors.surface1 }
-
-    IPv4DetailsSection {
-        width: root.width
-        interfaceName: root.wifiDevice ? root.wifiDevice.name : ""
     }
 
     Rectangle { width: root.width; height: 1; color: colors.surface1 }
@@ -303,12 +310,25 @@ Column {
             border.width: 1
             border.color: Qt.alpha(colors.overlay0, 0.3)
 
-            Text {
+            Row {
                 anchors.centerIn: parent
-                text: "Open Bluetooth Devices…"
-                color: colors.subtext0
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 11
+                spacing: 6
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "\u{f03cc}" // md-open_in_new
+                    color: colors.subtext0
+                    font.family: "Symbols Nerd Font"
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Bluetooth Devices"
+                    color: colors.subtext0
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 11
+                }
             }
 
             MouseArea {
