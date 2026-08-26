@@ -16,8 +16,23 @@ import QtQuick
 // translucent and blurred by Hyprland (see layerrule in
 // wayland/hyprland/default.nix), matching regular window transparency.
 ShellRoot {
-    SettingsWindow {
-        id: settingsWindow
+    // recreated fresh each time it's opened (Loader.active toggles
+    // construction/destruction) rather than a persistent instance whose
+    // `visible` gets flipped — Hyprland's mainMod+Q (`hl.dsp.window.close()`)
+    // closes this window's real toplevel surface out from under Quickshell,
+    // and re-showing that same now-closed instance never worked afterwards.
+    // Popups in this bar already use the equivalent pattern successfully
+    // (PopupWindow recreates on every open), so this window now does too.
+    Loader {
+        id: settingsLoader
+        active: false
+        sourceComponent: SettingsWindow {}
+        // closed() fires for any close, compositor-driven (mainMod+Q) or
+        // otherwise — without this, closing the window any way other than
+        // the dashboard toggle leaves `active` stuck true, so the next
+        // click would just tear down the (already-gone) window instead of
+        // opening a new one.
+        onLoaded: item.closed.connect(() => { settingsLoader.active = false; })
     }
 
     PanelWindow {
@@ -52,7 +67,7 @@ ShellRoot {
             }
             spacing: tokens.spacingNormal
             DashboardButton {
-                onClicked: settingsWindow.visible = !settingsWindow.visible
+                onClicked: settingsLoader.active = !settingsLoader.active
             }
             Workspaces {}
         }

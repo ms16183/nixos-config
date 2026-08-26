@@ -40,18 +40,15 @@ FloatingWindow {
     }
 
     title: "Settings"
-    visible: false
-    // sections are instantiated once and just shown/hidden with the whole
-    // window (not recreated per open), so their own Component.onCompleted
-    // only fires once at quickshell startup — refresh anything that can go
-    // stale (wallpaper directory contents, About's live system info)
-    // whenever the window is actually opened instead.
-    onVisibleChanged: {
-        if (visible) {
-            wallpaperSection.rescan();
-            aboutSection.refresh();
-            clockSection.refresh();
-        }
+    visible: true
+    // shell.qml recreates this whole window fresh via a Loader every time
+    // it's opened (see shell.qml for why), so refreshing anything that can
+    // go stale (wallpaper directory contents, About's live system info)
+    // just needs to happen once, right after construction.
+    Component.onCompleted: {
+        wallpaperSection.rescan();
+        aboutSection.refresh();
+        clockSection.refresh();
     }
     implicitWidth: 620
     implicitHeight: 600
