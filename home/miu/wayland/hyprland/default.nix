@@ -4,15 +4,8 @@
   wayland.windowManager.hyprland = {
 
     enable = true;
-    # hyprlang was deprecated in Hyprland 0.55 in favor of this lua config
-    # (home.stateVersion is 25.05, so the module's own default would still
-    # pick "hyprlang" here without this override).
+    
     configType = "lua";
-
-    # Kept in a plain .lua file (hyprland.lua) rather than inlined here,
-    # since binds need `hl.dsp.*` dispatcher calls as arguments and writing
-    # that through `settings` would mean wrapping every one of them in
-    # `lib.generators.mkLuaInline` from the Nix side for little benefit.
     extraConfig = builtins.readFile ./hyprland.lua;
   };
 
@@ -104,6 +97,18 @@
 
   services.hypridle = {
     enable = true;
+    settings = {
+      general = {
+        lock_cmd = "pidof hyprlock || hyprlock";
+        before_sleep_cmd = "loginctl lock-session";
+        # without this, after a lid-close-triggered suspend (systemd-logind's
+        # default HandleLidSwitch=suspend) the display can stay blank on
+        # resume until a real wake input forces it — which is why only the
+        # power button (not opening the lid) was bringing the screen back.
+        # This is hypridle's own documented fix for exactly that symptom.
+        after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })'";
+      };
+    };
   };
 
   services.hyprsunset = {

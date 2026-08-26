@@ -8,6 +8,12 @@ import Quickshell.Io
 // hyprpaper IPC, monitor scale via hyprctl, read-only system info). No
 // save/cancel: every control writes straight through to the live service
 // the instant it's touched, same as the bar's own popups.
+//
+// Layout matches the "2a" mockup: every section renders at once in one
+// continuous scroll, and the left sidebar is a jump-to-anchor nav (click
+// = smooth-scroll to that section's header), not a tab switcher — plus the
+// active sidebar entry tracks whichever section is currently at the top
+// of the viewport while scrolling, same as the mockup's own behavior.
 FloatingWindow {
     id: root
 
@@ -19,11 +25,34 @@ FloatingWindow {
         display: "Display",
         about: "About"
     })
+    property var sectionAnchors: ({})
+    readonly property var sectionOrder: ["network", "audio", "wallpaper", "display", "about"]
+
+    function scrollTo(key) {
+        const item = sectionAnchors[key];
+        if (!item) return;
+        scrollArea.contentY = Math.max(0, Math.min(
+            content.y + item.y,
+            scrollArea.contentHeight - scrollArea.height
+        ));
+        root.activeSection = key;
+    }
 
     title: "Settings"
     visible: false
-    implicitWidth: 560
-    implicitHeight: 420
+    // sections are instantiated once and just shown/hidden with the whole
+    // window (not recreated per open), so their own Component.onCompleted
+    // only fires once at quickshell startup — refresh anything that can go
+    // stale (wallpaper directory contents, About's live system info)
+    // whenever the window is actually opened instead.
+    onVisibleChanged: {
+        if (visible) {
+            wallpaperSection.rescan();
+            aboutSection.refresh();
+        }
+    }
+    implicitWidth: 620
+    implicitHeight: 600
     color: "transparent"
 
     Colors { id: colors }
@@ -53,16 +82,10 @@ FloatingWindow {
                 spacing: 2
 
                 Repeater {
-                    model: [
-                        { key: "network", label: "Network" },
-                        { key: "audio", label: "Audio" },
-                        { key: "wallpaper", label: "Wallpaper" },
-                        { key: "display", label: "Display" },
-                        { key: "about", label: "About" }
-                    ]
+                    model: root.sectionOrder
 
                     delegate: Rectangle {
-                        readonly property bool active: root.activeSection === modelData.key
+                        readonly property bool active: root.activeSection === modelData
 
                         x: 8
                         width: sidebar.width - 16
@@ -76,7 +99,7 @@ FloatingWindow {
                                 leftMargin: 10
                                 verticalCenter: parent.verticalCenter
                             }
-                            text: modelData.label
+                            text: root.sectionLabels[modelData]
                             font.family: "JetBrainsMono Nerd Font"
                             font.pixelSize: 12
                             color: active ? colors.text : colors.subtext0
@@ -85,7 +108,7 @@ FloatingWindow {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: root.activeSection = modelData.key
+                            onClicked: root.scrollTo(modelData)
                         }
                     }
                 }
@@ -98,32 +121,83 @@ FloatingWindow {
             }
 
             Flickable {
+                id: scrollArea
                 width: parent.width - sidebar.width - 1
                 height: parent.height
                 contentWidth: width
                 contentHeight: content.implicitHeight + 32
                 clip: true
 
+                Behavior on contentY {
+                    NumberAnimation { duration: tokens.spatialDuration; easing.type: Easing.OutCubic }
+                }
+
+                onContentYChanged: {
+                    const probe = contentY + 40;
+                    let current = root.sectionOrder[0];
+                    for (const key of root.sectionOrder) {
+                        const item = root.sectionAnchors[key];
+                        if (item && (content.y + item.y) <= probe) current = key;
+                    }
+                    root.activeSection = current;
+                }
+
                 Column {
                     id: content
                     x: 16
                     y: 16
                     width: parent.width - 32
-                    spacing: 16
+                    spacing: 24
 
-                    Text {
-                        text: root.sectionLabels[root.activeSection] ?? ""
-                        color: colors.text
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: 14
-                        font.bold: true
+                    Column {
+                        id: networkAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.network; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        NetworkSettingsSection { width: content.width }
                     }
 
-                    NetworkSettingsSection { width: content.width; visible: root.activeSection === "network" }
-                    AudioSettingsSection { width: content.width; visible: root.activeSection === "audio" }
-                    WallpaperSettingsSection { width: content.width; visible: root.activeSection === "wallpaper" }
-                    DisplaySettingsSection { width: content.width; visible: root.activeSection === "display" }
-                    AboutSettingsSection { width: content.width; visible: root.activeSection === "about" }
+                    Column {
+                        id: audioAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.audio; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        AudioSettingsSection { width: content.width }
+                    }
+
+                    Column {
+                        id: wallpaperAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.wallpaper; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        WallpaperSettingsSection { id: wallpaperSection; width: content.width }
+                    }
+
+                    Column {
+                        id: displayAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.display; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        DisplaySettingsSection { width: content.width }
+                    }
+
+                    Column {
+                        id: aboutAnchor
+                        width: content.width
+                        spacing: 12
+                        Text { text: root.sectionLabels.about; color: colors.text; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 15; font.bold: true }
+                        AboutSettingsSection { id: aboutSection; width: content.width }
+                    }
+
+                    Component.onCompleted: {
+                        root.sectionAnchors = {
+                            network: networkAnchor,
+                            audio: audioAnchor,
+                            wallpaper: wallpaperAnchor,
+                            display: displayAnchor,
+                            about: aboutAnchor
+                        };
+                    }
                 }
             }
         }
@@ -138,15 +212,15 @@ FloatingWindow {
             color: colors.surface1
         }
 
-        // lock/logout/restart/shutdown — always visible regardless of the
-        // active section. "Log Out" asks Hyprland itself to quit via
-        // Hyprland.dispatch(), sent over the same IPC socket used elsewhere
-        // in this bar — but since Hyprland 0.55, the "dispatch" socket verb
-        // evaluates its argument as a Lua expression that must produce a
-        // dispatcher object, not a bare legacy dispatcher name (confirmed:
-        // `hyprctl dispatch exit` itself fails with "hl.dispatch: expected
-        // a dispatcher", the fix being `hl.dsp.exit()` — same form as the
-        // wiki's `hyprctl dispatch 'hl.dsp.submap("reset")'` example).
+        // lock/logout/restart/shutdown — always visible regardless of scroll
+        // position. "Log Out" asks Hyprland itself to quit via
+        // Hyprland.dispatch() — but since Hyprland 0.55, the "dispatch"
+        // socket verb evaluates its argument as a Lua expression that must
+        // produce a dispatcher object, not a bare legacy dispatcher name
+        // (confirmed: `hyprctl dispatch exit` itself fails with
+        // "hl.dispatch: expected a dispatcher", the fix being
+        // `hl.dsp.exit()` — same form as the wiki's
+        // `hyprctl dispatch 'hl.dsp.submap("reset")'` example).
         // restart/shutdown are plain systemd calls; lock just runs hyprlock
         // directly, same binary the mainMod+L keybind in hyprland.lua
         // already launches.

@@ -19,10 +19,10 @@ Column {
     Colors { id: colors }
     Tokens { id: tokens }
 
-    // re-scan every time this section is opened, not just once at
-    // quickshell startup, so wallpapers added/removed later still show up
-    onVisibleChanged: if (visible) rescan()
-
+    // re-scanned by SettingsWindow.qml's onVisibleChanged every time the
+    // window is opened (this section itself is created once and never
+    // hidden/shown on its own, so its own onVisibleChanged would only ever
+    // fire once and isn't useful here).
     function rescan() {
         lastError = "";
         files = [];
