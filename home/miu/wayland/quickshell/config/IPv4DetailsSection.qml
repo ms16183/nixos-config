@@ -184,7 +184,15 @@ Column {
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 11
                 clip: true
-                Rectangle { z: -1; anchors { fill: parent; margins: -4 }; radius: 4; color: colors.surface0; border.color: colors.surface1; border.width: 1 }
+                Rectangle {
+                    z: -1
+                    anchors.fill: parent
+                    anchors.margins: -4
+                    radius: 4
+                    color: colors.surface0
+                    border.color: colors.surface1
+                    border.width: 1
+                }
             }
         }
 
@@ -201,7 +209,15 @@ Column {
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 11
                 clip: true
-                Rectangle { z: -1; anchors { fill: parent; margins: -4 }; radius: 4; color: colors.surface0; border.color: colors.surface1; border.width: 1 }
+                Rectangle {
+                    z: -1
+                    anchors.fill: parent
+                    anchors.margins: -4
+                    radius: 4
+                    color: colors.surface0
+                    border.color: colors.surface1
+                    border.width: 1
+                }
             }
         }
 
@@ -218,7 +234,15 @@ Column {
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 11
                 clip: true
-                Rectangle { z: -1; anchors { fill: parent; margins: -4 }; radius: 4; color: colors.surface0; border.color: colors.surface1; border.width: 1 }
+                Rectangle {
+                    z: -1
+                    anchors.fill: parent
+                    anchors.margins: -4
+                    radius: 4
+                    color: colors.surface0
+                    border.color: colors.surface1
+                    border.width: 1
+                }
             }
         }
 

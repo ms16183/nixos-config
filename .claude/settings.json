@@ -20,7 +20,8 @@
       "Bash(grep -rn \"modmask\\\\b\" /tmp/hl0554/src/managers/KeybindManager.* 2>/dev/null | head -10 *)",
       "Read(//c//**)",
       "Bash(curl -s \"https://raw.githubusercontent.com/nix-community/home-manager/release-26.05/modules/services/hyprpaper.nix\")",
-      "Bash(xargs grep -l \"Q_PROPERTY\\\\|Q_INVOKABLE\")"
+      "Bash(xargs grep -l \"Q_PROPERTY\\\\|Q_INVOKABLE\")",
+      "Bash(awk 'NR==187' \"c:/Users/user/Desktop/nixos-config/home/miu/wayland/quickshell/config/IPv4DetailsSection.qml\")"
     ]
   }
 }
