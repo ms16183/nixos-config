@@ -173,6 +173,39 @@ Column {
                 }
             }
         }
+
+        // Wayland has no XEmbed-style mechanism to embed another process's
+        // window inside this one, so nm-connection-editor (subnet/DHCP/DNS
+        // per-connection editing that goes well beyond what's built above)
+        // just gets launched as its own window instead.
+        Rectangle {
+            width: 200
+            height: 28
+            radius: 6
+            color: "transparent"
+            border.width: 1
+            border.color: Qt.alpha(colors.overlay0, 0.3)
+
+            Text {
+                anchors.centerIn: parent
+                text: "Open Wi-Fi Connections…"
+                color: colors.subtext0
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 11
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (nmEditorProc.running) return;
+                    nmEditorProc.command = ["nm-connection-editor"];
+                    nmEditorProc.running = true;
+                }
+            }
+        }
+
+        Process { id: nmEditorProc }
     }
 
     Rectangle { width: root.width; height: 1; color: colors.surface1 }
@@ -259,5 +292,36 @@ Column {
                 }
             }
         }
+
+        // same reasoning as the Wi-Fi button above — no way to embed
+        // blueman-manager's window, so it just opens on its own.
+        Rectangle {
+            width: 200
+            height: 28
+            radius: 6
+            color: "transparent"
+            border.width: 1
+            border.color: Qt.alpha(colors.overlay0, 0.3)
+
+            Text {
+                anchors.centerIn: parent
+                text: "Open Bluetooth Devices…"
+                color: colors.subtext0
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 11
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (bluemanProc.running) return;
+                    bluemanProc.command = ["blueman-manager"];
+                    bluemanProc.running = true;
+                }
+            }
+        }
+
+        Process { id: bluemanProc }
     }
 }

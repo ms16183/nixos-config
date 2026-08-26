@@ -60,7 +60,13 @@ FloatingWindow {
 
     Rectangle {
         anchors.fill: parent
-        radius: tokens.roundingNormal
+        // matches hyprland.lua's decoration.rounding (10), not
+        // tokens.roundingNormal (17) — this window is a regular Hyprland
+        // toplevel, so the compositor itself clips/rounds its actual
+        // corners at decoration.rounding; a larger radius here than that
+        // left a visible gap between this rectangle's corner and the
+        // window's real (tighter) rounded-corner clip.
+        radius: 10
         color: colors.mantle
         border.color: colors.surface1
         border.width: 1
