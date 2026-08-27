@@ -169,6 +169,7 @@
     # network
     dnsutils
     nmap
+    openvpn
     # visualization
     tree
     # audio

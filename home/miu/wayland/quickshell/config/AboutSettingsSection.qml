@@ -54,13 +54,18 @@ Column {
         const memMatch = memInfoFile.text().match(/^MemTotal:\s*(\d+)\s*kB/m);
         root.memory = memMatch ? (Math.round(parseInt(memMatch[1]) / 1024 / 1024 * 10) / 10) + " GiB" : "Unknown";
 
-        root.shell = Quickshell.env("SHELL") || "Unknown";
     }
 
     Process {
         running: true
         command: ["uname", "-r"]
         stdout: SplitParser { onRead: data => root.kernel = data }
+    }
+
+    Process {
+        running: true
+        command: ["sh", "-c", "\"$SHELL\" --version 2>/dev/null | head -n1 || echo unknown"]
+        stdout: SplitParser { onRead: data => root.shell = data }
     }
 
     Process {
