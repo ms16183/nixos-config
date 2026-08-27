@@ -76,6 +76,9 @@
     ranger
     # python
     python314
+    # rust
+    cargo
+    rustc
     # C/C++
     libgcc
     # AI coding
@@ -87,6 +90,7 @@
     obsidian
     # crypt
     veracrypt
+    authenticator
     # social
     discord
     # util
